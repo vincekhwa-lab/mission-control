@@ -1,58 +1,79 @@
-import http.server
-import socketserver
-import json
+from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+from pydantic import BaseModel
 import os
-from urllib.parse import urlparse
+import asyncio
 
-PORT = 8080
-WORKSPACE = "/home/node/.openclaw/workspace"
-WEB_DIR = os.path.join(WORKSPACE, "dashboard")
+app = FastAPI(title="Mission Control API")
 
-class Handler(http.server.SimpleHTTPRequestHandler):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, directory=WEB_DIR, **kwargs)
+# Dockerfile runs from mission-control/backend
+# So BASE_DIR should be mission-control (one level up)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATA_DIR = os.getenv("DATA_DIR", os.path.join(BASE_DIR, "data"))
+MEMORY_DIR = os.path.join(DATA_DIR, "memory")
+FRONTEND_DIR = os.getenv("FRONTEND_DIR", os.path.join(BASE_DIR, "frontend"))
 
-    def do_GET(self):
-        parsed_path = urlparse(self.path)
-        
-        # API Routes
-        if parsed_path.path.startswith('/api/'):
-            self.send_response(200)
-            self.send_header('Content-type', 'application/json')
-            self.send_header('Access-Control-Allow-Origin', '*')
-            self.end_headers()
-            
-            # Get specific file content
-            if parsed_path.path.startswith('/api/memory/'):
-                filename = os.path.basename(parsed_path.path)
-                try:
-                    with open(os.path.join(WORKSPACE, 'memory', filename), 'r') as f:
-                        content = f.read()
-                    self.wfile.write(json.dumps({'content': content}).encode())
-                except Exception as e:
-                    self.wfile.write(json.dumps({'error': str(e)}).encode())
-            
-            # List memory files
-            elif parsed_path.path == '/api/daily':
-                try:
-                    memory_dir = os.path.join(WORKSPACE, 'memory')
-                    if os.path.exists(memory_dir):
-                        files = os.listdir(memory_dir)
-                    else:
-                        files = []
-                    self.wfile.write(json.dumps({'files': files}).encode())
-                except Exception as e:
-                    self.wfile.write(json.dumps({'error': str(e)}).encode())
-                    
-            # Default response
-            else:
-                self.wfile.write(json.dumps({'status': 'ok', 'message': 'API is running'}).encode())
-            return
-            
-        # For everything else, serve static files from WEB_DIR
-        return http.server.SimpleHTTPRequestHandler.do_GET(self)
+os.makedirs(MEMORY_DIR, exist_ok=True)
+os.makedirs(FRONTEND_DIR, exist_ok=True)
+
+class DebateRequest(BaseModel):
+    topic: str
+    agents: list[str]
+
+@app.get("/api/daily")
+async def list_memories():
+    try:
+        files = [f for f in os.listdir(MEMORY_DIR) if f.endswith('.md')]
+        files.sort(reverse=True)
+        return {"files": files}
+    except Exception:
+        return {"files": []}
+
+@app.post("/api/debate")
+async def start_debate(request: DebateRequest):
+    if not request.topic.strip():
+        raise HTTPException(status_code=400, detail="請輸入主題")
+    
+    await asyncio.sleep(1.5)
+    
+    return {
+        "status": "success", "topic": request.topic,
+        "debate_memo": [
+            {
+                "agent": "Claude 3.5 Sonnet", "role": "首席架構師",
+                "style": "bg-blue-50 text-blue-800 border-blue-200",
+                "content": f"針對「{request.topic}」，從架構來看，若導入新興技術能降功耗，但初期 NRE 成本會提高 25%。需考量封裝相容性。"
+            },
+            {
+                "agent": "Gemini 1.5 Pro", "role": "市場戰略長",
+                "style": "bg-emerald-50 text-emerald-800 border-emerald-200",
+                "content": "同意成本考量。但若能率先推出低功耗方案，預計在 Q4 能搶下 15% 市佔，足以攤平初期成本。"
+            },
+            {
+                "agent": "DeepSeek V3", "role": "反方/紅軍",
+                "style": "bg-rose-50 text-rose-800 border-rose-200",
+                "content": "太樂觀了。新製程良率目前低於 60%，一旦良率無法突破，可能被對手碾壓。強烈建議先在非核心產品線進行 Pilot Run。"
+            },
+            {
+                "agent": "Executive Summary", "role": "最終決策建議",
+                "style": "bg-purple-50 text-purple-900 border-purple-200 font-bold",
+                "content": "結論：技術上可行且具潛力，但風險高。建議：撥出 10% 研發預算啟動小規模試產。"
+            }
+        ]
+    }
+
+@app.get("/")
+async def serve_frontend():
+    index_path = os.path.join(FRONTEND_DIR, "index.html")
+    if not os.path.exists(index_path):
+        return {"message": "Mission Control API is running. Please place index.html in frontend folder."}
+    return FileResponse(index_path)
+
+if os.path.exists(FRONTEND_DIR):
+    app.mount("/", StaticFiles(directory=FRONTEND_DIR), name="static")
 
 if __name__ == "__main__":
-    with socketserver.TCPServer(("", PORT), Handler) as httpd:
-        print(f"Mission Control Server running at http://localhost:{PORT}")
-        httpd.serve_forever()
+    import uvicorn
+    port = int(os.getenv("PORT", 8080))
+    uvicorn.run("main:app", host="0.0.0.0", port=port)
