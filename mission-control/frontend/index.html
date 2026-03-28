@@ -1,368 +1,171 @@
 <!DOCTYPE html>
-
-    
-    
-    The Decision Hub - R&D Mission Control
-    <!-- 載入 Tailwind CSS (CDN) -->
-    
-    <!-- 載入 FontAwesome 圖示 (CDN) -->
-    
-    
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Decision Hub - R&D Mission Control</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; }
         /* 美化卷軸 */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        /* 隱藏預設卷軸但保留滑動功能 */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden text-slate-800">
 
-    <!-- 側邊欄 (Sidebar) -->
-    
-        
-            V
+    <aside class="w-64 bg-white border-r border-slate-200 flex flex-col h-full z-10">
+        <div class="p-6 flex items-center gap-3 border-b border-slate-100">
+            <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-lg shadow-sm">V</div>
+            <h1 class="font-bold text-lg tracking-tight text-slate-900">Decision Hub</h1>
+        </div>
 
+        <div class="flex-1 overflow-y-auto no-scrollbar p-4 space-y-6">
+            <div>
+                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-2 flex items-center gap-2">
+                    <i class="fa-solid fa-folder-open"></i> 活躍專案 (Active)
+                </h2>
+                <ul class="space-y-1">
+                    <li><a href="#" class="block px-2 py-2 rounded-md text-sm font-medium text-blue-700 bg-blue-50/80 border border-blue-100/50 shadow-sm"><i class="fa-solid fa-microchip mr-2 text-blue-500"></i>HBM4 導入評估</a></li>
+                    <li><a href="#" class="block px-2 py-2 rounded-md text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"><i class="fa-solid fa-brain mr-2 text-slate-400"></i>Compute-in-Memory</a></li>
+                    <li><a href="#" class="block px-2 py-2 rounded-md text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"><i class="fa-solid fa-chart-line mr-2 text-slate-400"></i>TSMC 法說會分析</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-2 flex items-center gap-2">
+                    <i class="fa-solid fa-database"></i> 每日記憶庫 (Memories)
+                </h2>
+                <ul id="memory-list" class="space-y-1">
+                    <li class="px-2 py-2 text-sm text-slate-500"><i class="fa-solid fa-spinner fa-spin mr-2"></i>讀取中...</li>
+                </ul>
+            </div>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-full bg-slate-50/50 relative">
+        <header class="h-16 border-b border-slate-200 bg-white/80 backdrop-blur-md flex items-center justify-between px-6 sticky top-0 z-10">
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-full text-xs font-medium text-slate-600">
+                    <span class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span> 隔夜助理: 待機中
+                </div>
+                <div class="flex items-center gap-2 px-3 py-1.5 bg-blue-50 border border-blue-100 rounded-full text-xs font-medium text-blue-700">
+                    <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span> 趨勢掃描: 運行中
+                </div>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-6 flex gap-6">
             
-*Decision Hub*
+            <div class="flex-1 space-y-6 max-w-4xl">
+                <section class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-lightbulb text-amber-500"></i> 高價值洞察 (Actionable Insights)
+                        </h2>
+                        <span class="px-2 py-1 bg-red-50 text-red-600 text-xs font-bold rounded">最新</span>
+                    </div>
+                    <div class="border-l-4 border-amber-400 pl-4 py-1">
+                        <h3 class="font-bold text-slate-800 mb-1">NVIDIA 封裝供應鏈潛在異動</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed mb-3">隔夜助理掃描到多篇外媒報導指出 NVIDIA 正積極尋求 CoWoS 第二供應商以分散風險。身為 R&D Manager，這可能影響我們未來的封裝產能預估與成本結構。</p>
+                        <div class="flex gap-3">
+                            <button class="px-3 py-1.5 bg-slate-900 text-white text-xs font-medium rounded hover:bg-slate-800 transition">建立追蹤任務</button>
+                            <button class="px-3 py-1.5 bg-slate-100 text-slate-600 text-xs font-medium rounded hover:bg-slate-200 transition">暫時忽略</button>
+                        </div>
+                    </div>
+                </section>
 
-        
+                <section class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col h-[400px]">
+                    <div class="p-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+                        <h2 class="font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-users-viewfinder text-indigo-500"></i> 專家會議室 (The Boardroom)
+                        </h2>
+                    </div>
+                    <div class="p-4 flex gap-4 bg-slate-50/50 border-b border-slate-200">
+                        <label class="flex items-center gap-2 text-sm font-medium text-slate-700 bg-white px-3 py-2 rounded-lg border border-slate-200 shadow-sm cursor-pointer">
+                            <input type="checkbox" checked class="rounded text-indigo-600"> <span>首席架構師 Claude 3.5 Sonnet</span>
+                        </label>
+                        <label class="flex items-center gap-2 text-sm font-medium text-slate-700 bg-white px-3 py-2 rounded-lg border border-slate-200 shadow-sm cursor-pointer">
+                            <input type="checkbox" checked class="rounded text-blue-600"> <span>市場戰略長 Gemini 1.5 Pro</span>
+                        </label>
+                        <label class="flex items-center gap-2 text-sm font-medium text-slate-700 bg-white px-3 py-2 rounded-lg border border-slate-200 shadow-sm cursor-pointer">
+                            <input type="checkbox" checked class="rounded text-red-600"> <span>反方/紅軍 DeepSeek V3</span>
+                        </label>
+                    </div>
+                    <div class="flex-1 p-4 bg-white flex items-center justify-center text-slate-400 text-sm">
+                        <button class="px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg shadow-sm hover:bg-indigo-700 transition flex items-center gap-2">
+                            <i class="fa-solid fa-play"></i> 開始專家辯論
+                        </button>
+                    </div>
+                </section>
+            </div>
 
-        
-        
-            <!-- 專案區 -->
-            
+            <div class="w-80 bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col">
+                <div class="p-4 border-b border-slate-200 flex items-center justify-between">
+                    <h2 class="font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-satellite-dish text-green-500"></i> 產業情報雷達
+                    </h2>
+                    <span class="flex items-center gap-1 text-[10px] font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                        <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> Live
+                    </span>
+                </div>
+                <div class="p-4 flex-1 overflow-y-auto space-y-4">
+                    <div class="relative pl-4 border-l-2 border-blue-200">
+                        <div class="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-blue-500 ring-4 ring-white"></div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-xs font-bold text-slate-400">剛剛</span>
+                            <span class="text-[10px] font-bold bg-slate-100 text-slate-600 px-1.5 rounded">TSMC</span>
+                        </div>
+                        <h4 class="text-sm font-bold text-slate-800 mb-1 leading-tight">台積電擴充先進封裝產能，預計 Q3 提前達標</h4>
+                        <p class="text-xs text-slate-500 line-clamp-2">因應強勁需求，台積電將進一步上修今年 CoWoS 產能預估。</p>
+                    </div>
+                    <div class="relative pl-4 border-l-2 border-slate-200">
+                        <div class="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-slate-300 ring-4 ring-white"></div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-xs font-bold text-slate-400">2 小時前</span>
+                            <span class="text-[10px] font-bold bg-slate-100 text-slate-600 px-1.5 rounded">HBM</span>
+                        </div>
+                        <h4 class="text-sm font-bold text-slate-800 mb-1 leading-tight">SK Hynix 宣佈 HBM3E 良率突破 85%</h4>
+                        <p class="text-xs text-slate-500 line-clamp-2">記憶體巨頭宣佈其最新一代 HBM 產品良率超乎預期，將擴大供貨。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
 
-                
-                    
-*活躍專案 (Active)*
-
-                    
-                
-
-                
-                    
-                         
-                        HBM4 導入評估
-                    
-                    
-                         
-                        Compute-in-Memory
-                    
-                    
-                         
-                        TSMC 法說會分析
-                    
-                
-            
-
-            
-            <!-- 記憶庫區 -->
-            
-
-                
-*每日記憶庫 (Memories)*
-
-                <!-- 這裡的內容由 API 動態載入 -->
-                
-                    
-                         讀取中...
-                    
-                
-            
-
-            
-            <!-- 報告區 -->
-            
-
-                
-*智庫文件櫃 (Reports)*
-
-                
-                    
-                         
-                        隔夜助理晨報
-                    
-                    
-                         
-                        專家辯論 Memo
-                    
-                
-            
-
-        
-
-    
-
-    <!-- 主畫面區 (Main Content) -->
-    
-        
-        <!-- 頂部導覽 (Top Nav) -->
-        
-            
-                
-                    
-                        
-                    
-
-                    
-                
-
-            
-
-            
-            
-                
-                    
-                      
-                      
-                    
-                    隔夜助理: 待機中
-                
-
-                
-                    
-                      
-                      
-                    
-                    趨勢掃描: 運行中
-                
-
-            
-
-        
-
-        <!-- 儀表板內容 (Dashboard Content) -->
-        
-            
-            <!-- 中間專案與洞察區 -->
-            
-                
-                <!-- AI 洞察 (Actionable Insights) -->
-                
-                    
-                        
-                             高價值洞察 (Actionable Insights)
-                        
-                        最新
-                    
-
-                    
-                        
-                            
-                                
-                            
-
-                            
-
-                                
-*NVIDIA 封裝供應鏈潛在異動*
-
-                                
-                                    隔夜助理掃描到多篇外媒報導指出 NVIDIA 正積極尋求 CoWoS 第二供應商以分散風險。身為 R&D Manager，這可能影響我們未來的封裝產能預估與成本結構。
-                                
-
-                                
-                                    
-                                         建立追蹤任務
-                                    
-                                    
-                                        暫時忽略
-                                    
-                                
-
-                            
-
-                        
-
-                    
-
-                
-
-                <!-- 專家會議室 (The Boardroom) -->
-                
-                    
-                        
-                             專家會議室 (The Boardroom)
-                        
-                        一鍵召喚多模型 AI 智囊團進行技術決策辯論
-
-                   
-                    
-                        
-                            
-                            支援 Markdown 語法
-
-                        
-
-                        
-                        
-*選擇與會專家 (Select Agents)*
-
-                        
-                            <!-- 專家選項 1 -->
-                            
-                                
-                                
-                                    首席架構師
-                                    Claude 3.5 Sonnet
-                                
-
-                            
-                            
-                            <!-- 專家選項 2 -->
-                            
-                                
-                                
-                                    市場戰略長
-                                    Gemini 1.5 Pro
-                                
-
-                            
-                            
-                            <!-- 專家選項 3 -->
-                            
-                                
-                                
-                                    反方/紅軍
-                                    DeepSeek V3
-                                
-
-                            
-                        
-
-                        
-                        
-                            
-                                 開始專家辯論
-                            
-                        
-
-                    
-
-                
-            
-
-            <!-- 右側即時情報區 (Right Panel: Radar) -->
-            
-                
-                    
-                        
-                             產業情報雷達
-                        
-                        
-                             LIVE
-                        
-                    
-
-                    
-                    <!-- 新聞過濾標籤 -->
-                    
-                        全部
-                        TSMC
-                        HBM
-                        NVIDIA
-                    
-
-                    <!-- 新聞動態牆 -->
-                    
-                        <!-- 新聞 1 -->
-                        
-                            
-
-                            
-
-                            
-                                剛剛
-                                TSMC
-                            
-
-                            
-*台積電擴充先進封裝產能，預計 Q3 提前達標*
-
-                            因應強勁需求，台積電將進一步上修今年 CoWoS 產能預估。
-
-                        
-
-                        
-                        <!-- 新聞 2 -->
-                        
-                            
-
-                            
-
-                            
-                                2 小時前
-                                HBM
-                            
-
-                            
-*SK Hynix 宣佈 HBM3E 良率突破 85%*
-
-                            記憶體巨頭宣佈其最新一代 HBM 產品良率超乎預期，將擴大供貨。
-
-                        
-
-                    
-
-                    
-                    
-                        查看完整情報庫 
-                    
-
-                
-            
-        
-
-    
-
-    <!-- JavaScript 邏輯：呼叫後端 API -->
-    
-        // 使用相對路徑呼叫 API，這樣在雲端部署時不會有跨域 (CORS) 問題
+    <script>
         fetch('/api/daily')
             .then(res => res.json())
             .then(data => {
                 const list = document.getElementById('memory-list');
                 list.innerHTML = '';
-                
                 if(data.files && data.files.length > 0) {
-                    // 遍歷後端回傳的 Markdown 檔案名稱
                     data.files.forEach((file, index) => {
                         const date = file.replace('.md', '');
-                        // 第一個項目標示為 Active 狀態
-                        const activeClass = index === 0 ? 'text-blue-700 bg-blue-50/80 font-bold border border-blue-100/50 shadow-sm' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900';
-                        const iconClass = index === 0 ? 'text-blue-500' : 'text-slate-400';
-                        
                         list.innerHTML += `
-
-
-                                
-                                ${date} 日誌
-                            
+                            <li>
+                                <a href="#" class="block px-2 py-2 rounded-md text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900">
+                                    <i class="fa-regular fa-file-lines mr-2 text-slate-400"></i>${date} 日誌
+                                </a>
+                            </li>
                         `;
                     });
                 } else {
-                    list.innerHTML = `
-                        • 尚無記憶紀錄
-
-                    `;
+                    list.innerHTML = `<li class="px-2 py-2 text-sm text-slate-400"><i class="fa-solid fa-circle-info mr-2"></i>尚無記憶紀錄</li>`;
                 }
             })
             .catch(e => {
-                // 如果 API 失敗 (例如前端直接開啟檔案)，顯示測試用假資料
-                console.log("無法連線到後端 API，顯示模擬資料。");
-                document.getElementById('memory-list').innerHTML = `
-                    
-                         
-                        2026-03-28 日誌
-                    
-                    
-                         
-                        2026-03-27 日誌
-                    
+                const list = document.getElementById('memory-list');
+                list.innerHTML = `
+                    <li><a href="#" class="block px-2 py-2 rounded-md text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"><i class="fa-regular fa-file-lines mr-2 text-slate-400"></i>2026-03-28 日誌</a></li>
+                    <li><a href="#" class="block px-2 py-2 rounded-md text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"><i class="fa-regular fa-file-lines mr-2 text-slate-400"></i>2026-03-27 日誌</a></li>
                 `;
             });
-    
-
-
+    </script>
+</body>
+</html>
