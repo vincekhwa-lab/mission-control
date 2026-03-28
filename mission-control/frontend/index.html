@@ -3,167 +3,302 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Decision Hub - R&D Mission Control</title>
+    <title>The Decision Hub - 小V 主控台</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; }
-        /* 美化卷軸 */
+        /* Scrollbar styles */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="flex h-screen overflow-hidden text-slate-800">
-
-    <aside class="w-64 bg-white border-r border-slate-200 flex flex-col h-full z-10">
-        <div class="p-6 flex items-center gap-3 border-b border-slate-100">
-            <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-lg shadow-sm">V</div>
-            <h1 class="font-bold text-lg tracking-tight text-slate-900">Decision Hub</h1>
+<body class="text-slate-800 h-screen flex overflow-hidden bg-slate-50">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white border-r border-slate-200 flex flex-col shrink-0 z-10 shadow-sm">
+        <div class="h-16 px-5 border-b border-slate-200 flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-blue-600 shadow-md text-white flex items-center justify-center font-bold text-lg">V</div>
+            <h1 class="font-bold text-lg tracking-tight">Decision Hub</h1>
         </div>
-
-        <div class="flex-1 overflow-y-auto no-scrollbar p-4 space-y-6">
+        <div class="flex-1 overflow-y-auto p-5 space-y-8">
             <div>
-                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-2 flex items-center gap-2">
-                    <i class="fa-solid fa-folder-open"></i> 活躍專案 (Active)
-                </h2>
-                <ul class="space-y-1">
-                    <li><a href="#" class="block px-2 py-2 rounded-md text-sm font-medium text-blue-700 bg-blue-50/80 border border-blue-100/50 shadow-sm"><i class="fa-solid fa-microchip mr-2 text-blue-500"></i>HBM4 導入評估</a></li>
-                    <li><a href="#" class="block px-2 py-2 rounded-md text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"><i class="fa-solid fa-brain mr-2 text-slate-400"></i>Compute-in-Memory</a></li>
-                    <li><a href="#" class="block px-2 py-2 rounded-md text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"><i class="fa-solid fa-chart-line mr-2 text-slate-400"></i>TSMC 法說會分析</a></li>
+                <div class="flex items-center justify-between mb-3 group">
+                    <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">活躍專案 (Active)</h2>
+                    <i class="fas fa-plus text-slate-300 hover:text-blue-500 cursor-pointer opacity-0 group-hover:opacity-100 transition"></i>
+                </div>
+                <ul class="space-y-1 text-sm font-medium">
+                    <li class="flex items-center gap-3 text-blue-700 bg-blue-50/80 px-3 py-2.5 rounded-lg cursor-pointer border border-blue-100/50">
+                        <i class="fas fa-microchip w-4 text-center"></i> 
+                        <span class="truncate">HBM4 導入評估</span>
+                    </li>
+                    <li class="flex items-center gap-3 text-slate-600 hover:bg-slate-100 hover:text-slate-900 px-3 py-2.5 rounded-lg cursor-pointer transition">
+                        <i class="fas fa-memory w-4 text-center text-slate-400"></i> 
+                        <span class="truncate">Compute-in-Memory</span>
+                    </li>
+                    <li class="flex items-center gap-3 text-slate-600 hover:bg-slate-100 hover:text-slate-900 px-3 py-2.5 rounded-lg cursor-pointer transition">
+                        <i class="fas fa-chart-line w-4 text-center text-slate-400"></i> 
+                        <span class="truncate">台積電法說會分析</span>
+                    </li>
                 </ul>
             </div>
-
+            
             <div>
-                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-2 flex items-center gap-2">
-                    <i class="fa-solid fa-database"></i> 每日記憶庫 (Memories)
-                </h2>
-                <ul id="memory-list" class="space-y-1">
-                    <li class="px-2 py-2 text-sm text-slate-500"><i class="fa-solid fa-spinner fa-spin mr-2"></i>讀取中...</li>
+                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">每日記憶庫 (Memories)</h2>
+                <ul class="space-y-1 text-sm font-medium" id="memory-list">
+                    <li class="flex items-center gap-3 text-slate-400 px-3 py-2 animate-pulse">
+                        <i class="fas fa-circle-notch fa-spin w-4 text-center"></i> 讀取中...
+                    </li>
+                </ul>
+            </div>
+            
+            <div>
+                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">智庫文件櫃 (Reports)</h2>
+                <ul class="space-y-1 text-sm font-medium">
+                    <li class="flex items-center gap-3 text-slate-600 hover:bg-slate-100 hover:text-slate-900 px-3 py-2.5 rounded-lg cursor-pointer transition">
+                        <i class="fas fa-file-alt w-4 text-center text-emerald-500"></i> 
+                        <span class="truncate">隔夜助理晨報</span>
+                    </li>
+                    <li class="flex items-center gap-3 text-slate-600 hover:bg-slate-100 hover:text-slate-900 px-3 py-2.5 rounded-lg cursor-pointer transition">
+                        <i class="fas fa-users-cog w-4 text-center text-purple-500"></i> 
+                        <span class="truncate">專家辯論 Memo</span>
+                    </li>
                 </ul>
             </div>
         </div>
     </aside>
 
-    <main class="flex-1 flex flex-col h-full bg-slate-50/50 relative">
-        <header class="h-16 border-b border-slate-200 bg-white/80 backdrop-blur-md flex items-center justify-between px-6 sticky top-0 z-10">
-            <div class="flex items-center gap-4">
-                <div class="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-full text-xs font-medium text-slate-600">
-                    <span class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span> 隔夜助理: 待機中
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
+        <!-- Top Nav -->
+        <header class="h-16 bg-white/80 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-8 shrink-0 z-20 sticky top-0">
+            <div class="flex items-center gap-3 flex-1 max-w-xl">
+                <div class="relative w-full group">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-bolt text-amber-500 group-focus-within:text-amber-600 transition-colors"></i>
+                    </div>
+                    <input type="text" placeholder="Quick Capture: 隨手記錄靈感或待辦事項，按 Enter 歸檔..." 
+                           class="w-full bg-slate-100/80 border border-transparent rounded-full pl-10 pr-4 py-2 text-sm text-slate-700 placeholder-slate-400 focus:bg-white focus:border-blue-300 focus:ring-4 focus:ring-blue-100 outline-none transition-all shadow-sm">
                 </div>
-                <div class="flex items-center gap-2 px-3 py-1.5 bg-blue-50 border border-blue-100 rounded-full text-xs font-medium text-blue-700">
-                    <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span> 趨勢掃描: 運行中
+            </div>
+            
+            <div class="flex items-center gap-4 ml-6 shrink-0">
+                <div class="flex items-center gap-2 bg-emerald-50 border border-emerald-100 px-3 py-1.5 rounded-full shadow-sm">
+                    <span class="relative flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    <span class="text-xs font-semibold text-emerald-700">隔夜助理: 待機中</span>
+                </div>
+                <div class="flex items-center gap-2 bg-blue-50 border border-blue-100 px-3 py-1.5 rounded-full shadow-sm">
+                    <span class="relative flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" style="animation-duration: 2s;"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                    </span>
+                    <span class="text-xs font-semibold text-blue-700">趨勢掃描: 運行中</span>
                 </div>
             </div>
         </header>
 
-        <div class="flex-1 overflow-y-auto p-6 flex gap-6">
+        <!-- Dashboard Content -->
+        <div class="flex-1 overflow-y-auto p-8 flex gap-8">
             
-            <div class="flex-1 space-y-6 max-w-4xl">
-                <section class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-                            <i class="fa-solid fa-lightbulb text-amber-500"></i> 高價值洞察 (Actionable Insights)
+            <!-- Center Column: Decision & Action -->
+            <div class="flex-1 flex flex-col gap-6 max-w-4xl">
+                
+                <!-- Actionable Insights -->
+                <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="bg-gradient-to-r from-amber-50 to-orange-50 border-b border-amber-100/50 px-6 py-4 flex items-center justify-between">
+                        <h2 class="text-base font-bold text-amber-900 flex items-center gap-2">
+                            <i class="fas fa-lightbulb text-amber-500"></i> 高價值洞察 (Actionable Insights)
                         </h2>
-                        <span class="px-2 py-1 bg-red-50 text-red-600 text-xs font-bold rounded">最新</span>
+                        <span class="text-xs font-medium bg-amber-200/50 text-amber-800 px-2 py-1 rounded-md">最新</span>
                     </div>
-                    <div class="border-l-4 border-amber-400 pl-4 py-1">
-                        <h3 class="font-bold text-slate-800 mb-1">NVIDIA 封裝供應鏈潛在異動</h3>
-                        <p class="text-sm text-slate-600 leading-relaxed mb-3">隔夜助理掃描到多篇外媒報導指出 NVIDIA 正積極尋求 CoWoS 第二供應商以分散風險。身為 R&D Manager，這可能影響我們未來的封裝產能預估與成本結構。</p>
-                        <div class="flex gap-3">
-                            <button class="px-3 py-1.5 bg-slate-900 text-white text-xs font-medium rounded hover:bg-slate-800 transition">建立追蹤任務</button>
-                            <button class="px-3 py-1.5 bg-slate-100 text-slate-600 text-xs font-medium rounded hover:bg-slate-200 transition">暫時忽略</button>
+                    <div class="p-6">
+                        <div class="flex gap-4">
+                            <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
+                                <i class="fas fa-exclamation-triangle text-amber-600 text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-800 text-lg">NVIDIA 封裝供應鏈潛在異動</h3>
+                                <p class="text-slate-600 text-sm mt-2 leading-relaxed">
+                                    隔夜助理掃描到多篇外媒報導指出 NVIDIA 正積極尋求 CoWoS 第二供應商以分散風險。身為 R&D Manager，這可能影響我們未來的封裝產能預估與成本結構。
+                                </p>
+                                <div class="mt-4 flex gap-3">
+                                    <button class="text-xs font-bold bg-amber-100 text-amber-800 px-4 py-2 rounded-lg hover:bg-amber-200 transition-colors">
+                                        <i class="fas fa-plus mr-1"></i> 建立追蹤任務
+                                    </button>
+                                    <button class="text-xs font-bold bg-slate-100 text-slate-600 px-4 py-2 rounded-lg hover:bg-slate-200 transition-colors">
+                                        忽略
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
 
-                <section class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col h-[400px]">
-                    <div class="p-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
-                        <h2 class="font-bold text-slate-800 flex items-center gap-2">
-                            <i class="fa-solid fa-users-viewfinder text-indigo-500"></i> 專家會議室 (The Boardroom)
+                <!-- The Boardroom -->
+                <section class="bg-white rounded-2xl shadow-sm border border-slate-200 flex-1 flex flex-col min-h-[400px] overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="bg-gradient-to-r from-purple-50 to-indigo-50 border-b border-purple-100/50 px-6 py-4">
+                        <h2 class="text-base font-bold text-purple-900 flex items-center gap-2">
+                            <i class="fas fa-users-cog text-purple-600"></i> 專家會議室 (The Boardroom)
                         </h2>
+                        <p class="text-xs text-purple-700/80 mt-1 ml-6">一鍵召喚多模型 AI 智囊團進行決策辯論</p>
                     </div>
-                    <div class="p-4 flex gap-4 bg-slate-50/50 border-b border-slate-200">
-                        <label class="flex items-center gap-2 text-sm font-medium text-slate-700 bg-white px-3 py-2 rounded-lg border border-slate-200 shadow-sm cursor-pointer">
-                            <input type="checkbox" checked class="rounded text-indigo-600"> <span>首席架構師 Claude 3.5 Sonnet</span>
-                        </label>
-                        <label class="flex items-center gap-2 text-sm font-medium text-slate-700 bg-white px-3 py-2 rounded-lg border border-slate-200 shadow-sm cursor-pointer">
-                            <input type="checkbox" checked class="rounded text-blue-600"> <span>市場戰略長 Gemini 1.5 Pro</span>
-                        </label>
-                        <label class="flex items-center gap-2 text-sm font-medium text-slate-700 bg-white px-3 py-2 rounded-lg border border-slate-200 shadow-sm cursor-pointer">
-                            <input type="checkbox" checked class="rounded text-red-600"> <span>反方/紅軍 DeepSeek V3</span>
-                        </label>
-                    </div>
-                    <div class="flex-1 p-4 bg-white flex items-center justify-center text-slate-400 text-sm">
-                        <button class="px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg shadow-sm hover:bg-indigo-700 transition flex items-center gap-2">
-                            <i class="fa-solid fa-play"></i> 開始專家辯論
-                        </button>
+                    
+                    <div class="p-6 flex-1 flex flex-col">
+                        <div class="relative mb-5 group">
+                            <textarea class="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 pb-12 text-sm text-slate-800 resize-none focus:bg-white focus:ring-4 focus:ring-purple-100 focus:border-purple-300 outline-none transition-all shadow-inner h-32" 
+                                      placeholder="輸入需要討論的技術或商業難題。例如：評估在下一代產品導入新興記憶體 (Emerging Memory) 取代部分 SRAM 的成本效益與技術風險..."></textarea>
+                            <div class="absolute bottom-3 right-3 text-xs text-slate-400 font-medium">支援 Markdown 語法</div>
+                        </div>
+                        
+                        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">選擇與會專家 (Select Agents)</h3>
+                        <div class="flex flex-wrap gap-3 mb-6">
+                            <label class="flex items-center gap-2 px-4 py-2.5 bg-blue-50 border border-blue-200 rounded-xl cursor-pointer hover:bg-blue-100 transition-colors shadow-sm">
+                                <input type="checkbox" checked class="accent-blue-600 w-4 h-4 cursor-pointer">
+                                <div class="flex flex-col ml-1">
+                                    <span class="text-sm font-bold text-blue-900 leading-tight">首席架構師</span>
+                                    <span class="text-[10px] text-blue-600 font-medium">Claude 3.5 Sonnet</span>
+                                </div>
+                            </label>
+                            
+                            <label class="flex items-center gap-2 px-4 py-2.5 bg-emerald-50 border border-emerald-200 rounded-xl cursor-pointer hover:bg-emerald-100 transition-colors shadow-sm">
+                                <input type="checkbox" checked class="accent-emerald-600 w-4 h-4 cursor-pointer">
+                                <div class="flex flex-col ml-1">
+                                    <span class="text-sm font-bold text-emerald-900 leading-tight">市場戰略長</span>
+                                    <span class="text-[10px] text-emerald-600 font-medium">Gemini 1.5 Pro</span>
+                                </div>
+                            </label>
+                            
+                            <label class="flex items-center gap-2 px-4 py-2.5 bg-rose-50 border border-rose-200 rounded-xl cursor-pointer hover:bg-rose-100 transition-colors shadow-sm">
+                                <input type="checkbox" checked class="accent-rose-600 w-4 h-4 cursor-pointer">
+                                <div class="flex flex-col ml-1">
+                                    <span class="text-sm font-bold text-rose-900 leading-tight">反方/紅軍</span>
+                                    <span class="text-[10px] text-rose-600 font-medium">DeepSeek V3</span>
+                                </div>
+                            </label>
+                        </div>
+                        
+                        <div class="mt-auto pt-4 border-t border-slate-100">
+                            <button class="bg-purple-600 text-white font-bold py-2.5 px-6 rounded-xl hover:bg-purple-700 hover:shadow-lg hover:-translate-y-0.5 transition-all flex items-center gap-2">
+                                <i class="fas fa-play text-sm"></i> 開始專家辯論
+                            </button>
+                        </div>
                     </div>
                 </section>
             </div>
 
-            <div class="w-80 bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col">
-                <div class="p-4 border-b border-slate-200 flex items-center justify-between">
-                    <h2 class="font-bold text-slate-800 flex items-center gap-2">
-                        <i class="fa-solid fa-satellite-dish text-green-500"></i> 產業情報雷達
-                    </h2>
-                    <span class="flex items-center gap-1 text-[10px] font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                        <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> Live
-                    </span>
-                </div>
-                <div class="p-4 flex-1 overflow-y-auto space-y-4">
-                    <div class="relative pl-4 border-l-2 border-blue-200">
-                        <div class="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-blue-500 ring-4 ring-white"></div>
-                        <div class="flex items-center gap-2 mb-1">
-                            <span class="text-xs font-bold text-slate-400">剛剛</span>
-                            <span class="text-[10px] font-bold bg-slate-100 text-slate-600 px-1.5 rounded">TSMC</span>
-                        </div>
-                        <h4 class="text-sm font-bold text-slate-800 mb-1 leading-tight">台積電擴充先進封裝產能，預計 Q3 提前達標</h4>
-                        <p class="text-xs text-slate-500 line-clamp-2">因應強勁需求，台積電將進一步上修今年 CoWoS 產能預估。</p>
+            <!-- Right Panel: Radar & Live Feed -->
+            <aside class="w-80 flex flex-col gap-6 shrink-0">
+                
+                <!-- Tech & Market Radar -->
+                <section class="bg-white rounded-2xl shadow-sm border border-slate-200 flex-1 flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="bg-slate-800 text-white px-5 py-4 flex items-center justify-between sticky top-0 z-10">
+                        <h2 class="text-sm font-bold flex items-center gap-2 tracking-wide">
+                            <i class="fas fa-satellite-dish text-blue-400"></i> 產業情報雷達
+                        </h2>
+                        <span class="flex items-center gap-1.5 text-[10px] font-bold bg-slate-700 px-2 py-1 rounded text-emerald-400">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> LIVE
+                        </span>
                     </div>
-                    <div class="relative pl-4 border-l-2 border-slate-200">
-                        <div class="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-slate-300 ring-4 ring-white"></div>
-                        <div class="flex items-center gap-2 mb-1">
-                            <span class="text-xs font-bold text-slate-400">2 小時前</span>
-                            <span class="text-[10px] font-bold bg-slate-100 text-slate-600 px-1.5 rounded">HBM</span>
-                        </div>
-                        <h4 class="text-sm font-bold text-slate-800 mb-1 leading-tight">SK Hynix 宣佈 HBM3E 良率突破 85%</h4>
-                        <p class="text-xs text-slate-500 line-clamp-2">記憶體巨頭宣佈其最新一代 HBM 產品良率超乎預期，將擴大供貨。</p>
+                    
+                    <!-- Radar Filters -->
+                    <div class="px-5 py-3 border-b border-slate-100 flex gap-2 overflow-x-auto no-scrollbar bg-slate-50/50">
+                        <span class="text-[11px] font-bold bg-slate-200 text-slate-700 px-2.5 py-1 rounded-full whitespace-nowrap cursor-pointer hover:bg-slate-300">All</span>
+                        <span class="text-[11px] font-bold bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full whitespace-nowrap cursor-pointer hover:bg-blue-200">TSMC</span>
+                        <span class="text-[11px] font-bold bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full whitespace-nowrap cursor-pointer hover:bg-emerald-200">HBM</span>
+                        <span class="text-[11px] font-bold bg-purple-100 text-purple-700 px-2.5 py-1 rounded-full whitespace-nowrap cursor-pointer hover:bg-purple-200">NVIDIA</span>
                     </div>
-                </div>
-            </div>
+
+                    <div class="flex-1 overflow-y-auto p-5 space-y-6" id="news-radar">
+                        <!-- News Items -->
+                        <div class="relative pl-4">
+                            <div class="absolute left-0 top-1.5 bottom-0 w-0.5 bg-blue-200 rounded-full"></div>
+                            <div class="absolute left-[-3px] top-1.5 w-2 h-2 rounded-full bg-blue-500 ring-4 ring-white"></div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">剛剛</span>
+                                <span class="text-[10px] font-bold bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">TSMC</span>
+                                <span class="text-[10px] font-bold bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">CoWoS</span>
+                            </div>
+                            <h4 class="font-bold text-sm text-slate-800 cursor-pointer hover:text-blue-600 leading-snug transition-colors">台積電擴充先進封裝產能，預計 Q3 提前達標</h4>
+                            <p class="text-xs text-slate-500 mt-1.5 line-clamp-2 leading-relaxed">因應 NVIDIA 與 AMD 強勁需求，台積電將進一步上修今年 CoWoS 產能預估，預計月產能將突破目標。</p>
+                        </div>
+                        
+                        <div class="relative pl-4">
+                            <div class="absolute left-0 top-1.5 bottom-0 w-0.5 bg-emerald-200 rounded-full"></div>
+                            <div class="absolute left-[-3px] top-1.5 w-2 h-2 rounded-full bg-emerald-500 ring-4 ring-white"></div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">2 小時前</span>
+                                <span class="text-[10px] font-bold bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded">HBM</span>
+                                <span class="text-[10px] font-bold bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">SK Hynix</span>
+                            </div>
+                            <h4 class="font-bold text-sm text-slate-800 cursor-pointer hover:text-emerald-600 leading-snug transition-colors">SK Hynix 宣佈 HBM3E 良率突破 85%</h4>
+                            <p class="text-xs text-slate-500 mt-1.5 line-clamp-2 leading-relaxed">記憶體巨頭 SK Hynix 今日宣佈其最新一代 HBM 產品良率超乎預期，將擴大對核心客戶供貨，鞏固市場領先地位。</p>
+                        </div>
+                        
+                        <div class="relative pl-4">
+                            <div class="absolute left-0 top-1.5 bottom-0 w-0.5 bg-rose-200 rounded-full"></div>
+                            <div class="absolute left-[-3px] top-1.5 w-2 h-2 rounded-full bg-rose-500 ring-4 ring-white"></div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">5 小時前</span>
+                                <span class="text-[10px] font-bold bg-rose-50 text-rose-600 px-1.5 py-0.5 rounded">總體經濟</span>
+                            </div>
+                            <h4 class="font-bold text-sm text-slate-800 cursor-pointer hover:text-rose-600 leading-snug transition-colors">美商務部發布最新晶片出口管制清單</h4>
+                            <p class="text-xs text-slate-500 mt-1.5 line-clamp-2 leading-relaxed">新一波管制將更嚴格限制特定算力密度與頻寬的 AI 加速器出口，市場預估將對客製化晶片 (ASIC) 設計公司造成影響。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="p-3 border-t border-slate-100 bg-slate-50 text-center">
+                        <button class="text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors">查看完整情報庫 <i class="fas fa-arrow-right ml-1"></i></button>
+                    </div>
+                </section>
+            </aside>
         </div>
     </main>
 
     <script>
+        // Fetch real memory files from our local Python server
         fetch('/api/daily')
             .then(res => res.json())
             .then(data => {
-                const list = document.getElementById('memory-list');
-                list.innerHTML = '';
                 if(data.files && data.files.length > 0) {
-                    data.files.forEach((file, index) => {
+                    const list = document.getElementById('memory-list');
+                    list.innerHTML = '';
+                    
+                    // Sort files descending (newest first)
+                    const files = data.files.filter(f => f.endsWith('.md')).sort().reverse();
+                    
+                    files.forEach((file, index) => {
                         const date = file.replace('.md', '');
+                        // Make the first one active
+                        const activeClass = index === 0 ? 'text-blue-700 bg-blue-50/50 font-bold border border-blue-100/50' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900';
+                        const iconClass = index === 0 ? 'text-blue-500' : 'text-slate-400';
+                        
                         list.innerHTML += `
-                            <li>
-                                <a href="#" class="block px-2 py-2 rounded-md text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900">
-                                    <i class="fa-regular fa-file-lines mr-2 text-slate-400"></i>${date} 日誌
-                                </a>
+                            <li class="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer transition ${activeClass}">
+                                <i class="far fa-calendar-alt w-4 text-center ${iconClass}"></i> 
+                                <span class="truncate">${date} 日誌</span>
                             </li>
                         `;
                     });
                 } else {
-                    list.innerHTML = `<li class="px-2 py-2 text-sm text-slate-400"><i class="fa-solid fa-circle-info mr-2"></i>尚無記憶紀錄</li>`;
+                    document.getElementById('memory-list').innerHTML = `
+                        <li class="px-3 py-2 text-xs text-slate-400 italic">尚無記憶紀錄</li>
+                    `;
                 }
-            })
-            .catch(e => {
-                const list = document.getElementById('memory-list');
-                list.innerHTML = `
-                    <li><a href="#" class="block px-2 py-2 rounded-md text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"><i class="fa-regular fa-file-lines mr-2 text-slate-400"></i>2026-03-28 日誌</a></li>
-                    <li><a href="#" class="block px-2 py-2 rounded-md text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900"><i class="fa-regular fa-file-lines mr-2 text-slate-400"></i>2026-03-27 日誌</a></li>
+            }).catch(e => {
+                console.log("Running without backend server. Using mock data.");
+                document.getElementById('memory-list').innerHTML = `
+                    <li class="flex items-center gap-3 text-blue-700 bg-blue-50/50 px-3 py-2.5 rounded-lg cursor-pointer border border-blue-100/50 font-bold">
+                        <i class="far fa-calendar-alt w-4 text-center text-blue-500"></i> 
+                        <span class="truncate">2026-03-28 日誌</span>
+                    </li>
+                    <li class="flex items-center gap-3 text-slate-600 hover:bg-slate-100 px-3 py-2.5 rounded-lg cursor-pointer transition">
+                        <i class="far fa-calendar-alt w-4 text-center text-slate-400"></i> 
+                        <span class="truncate">2026-03-27 日誌</span>
+                    </li>
                 `;
             });
     </script>
