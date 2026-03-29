@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Decision Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background-color: #f8fafc; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        #debate-modal { transition: opacity 0.3s ease-in-out; }
+        .modal-content { transition: transform 0.3s ease-in-out; }
+    </style>
+</head>
+<body class="text-slate-800 h-screen flex overflow-hidden bg-slate-50">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white border-r border-slate-200 p-5 shrink-0 z-10 shadow-sm">
+        <h1 class="font-bold text-xl mb-8 text-slate-800"><i class="fas fa-microchip text-blue-600 mr-2"></i>Decision Hub</h1>
+        
+        <h2 class="text-xs font-bold text-slate-400 mb-3 uppercase tracking-wider">活躍專案</h2>
+        <ul class="space-y-2 text-sm mb-8">
+            <li class="bg-blue-50 text-blue-700 px-3 py-2 rounded-lg border border-blue-100 font-medium">HBM4 導入評估</li>
+            <li class="text-slate-600 px-3 py-2 hover:bg-slate-100 rounded-lg cursor-pointer transition">CoWoS 驗證中</li>
+        </ul>
+        
+        <h2 class="text-xs font-bold text-slate-400 mb-3 uppercase tracking-wider">每日記憶庫</h2>
+        <ul class="space-y-2 text-sm text-slate-600" id="memory-list">
+            <li class="px-3 py-2 text-slate-400">載入中...</li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-8 overflow-y-auto">
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col max-w-4xl mx-auto min-h-[400px]">
+            <div class="bg-purple-50 px-6 py-4 border-b border-purple-100 rounded-t-2xl">
+                <h2 class="font-bold text-purple-900 text-lg"><i class="fas fa-users-cog mr-2"></i>專家會議室 (The Boardroom)</h2>
+            </div>
+            
+            <div class="p-6 flex-1 flex flex-col">
+                <textarea id="debate-topic" 
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm h-32 mb-6 focus:ring-4 focus:ring-purple-100 focus:border-purple-300 outline-none transition" 
+                    placeholder="輸入難題，例如：評估導入 Emerging Memory 取代 SRAM 的成本效益..."></textarea>
+                
+                <div class="flex flex-wrap gap-3 mb-6" id="agent-checkboxes">
+                    <label class="flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-xl cursor-pointer hover:bg-blue-100 transition">
+                        <input type="checkbox" value="claude" checked class="w-4 h-4 text-blue-600"><span class="text-sm font-bold text-blue-800">首席架構師</span>
+                    </label>
+                    <label class="flex items-center gap-2 bg-emerald-50 px-4 py-2 rounded-xl cursor-pointer hover:bg-emerald-100 transition">
+                        <input type="checkbox" value="gemini" checked class="w-4 h-4 text-emerald-600"><span class="text-sm font-bold text-emerald-800">戰略長</span>
+                    </label>
+                    <label class="flex items-center gap-2 bg-rose-50 px-4 py-2 rounded-xl cursor-pointer hover:bg-rose-100 transition">
+                        <input type="checkbox" value="deepseek" checked class="w-4 h-4 text-rose-600"><span class="text-sm font-bold text-rose-800">反方紅軍</span>
+                    </label>
+                </div>
+                
+                <button id="start-debate-btn" class="bg-purple-600 text-white font-bold py-3 px-8 rounded-xl hover:bg-purple-700 transition flex items-center justify-center gap-2 self-start shadow-lg shadow-purple-200">
+                    <i class="fas fa-play"></i> <span id="btn-text">開始專家辯論</span>
+                </button>
+            </div>
+        </section>
+        
+        <!-- Status Bar -->
+        <div class="mt-6 text-center text-slate-400 text-sm">
+            <i class="fas fa-circle text-green-500 mr-1 animate-pulse"></i> System Online
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div id="debate-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden opacity-0 flex items-center justify-center p-6">
+        <div class="modal-content bg-white rounded-2xl w-full max-w-4xl max-h-[85vh] flex flex-col scale-95 shadow-2xl">
+            <div class="px-6 py-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center rounded-t-2xl">
+                <h2 class="text-lg font-bold text-slate-800"><i class="fas fa-file-alt mr-2"></i>決策備忘錄</h2>
+                <button id="close-modal-btn" class="text-slate-500 hover:text-red-500 transition p-2"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto flex-1 space-y-4 bg-slate-50/50" id="modal-body">
+            </div>
+            
+            <div class="px-6 py-4 border-t border-slate-200 bg-slate-50 rounded-b-2xl flex justify-end gap-3">
+                <button class="text-slate-500 px-4 py-2 hover:text-slate-700 font-medium">取消</button>
+                <button class="bg-blue-600 text-white px-5 py-2 rounded-lg font-bold hover:bg-blue-700 shadow-lg shadow-blue-200">儲存至智庫</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fetch memory files on load
+        fetch('/api/daily').then(r => r.json()).then(data => {
+            const list = document.getElementById('memory-list');
+            list.innerHTML = '';
+            if(data.files && data.files.length) {
+                data.files.forEach(f => {
+                    list.innerHTML += `<li class="px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-lg cursor-pointer">${f.replace('.md', '')}</li>`;
+                });
+            } else {
+                list.innerHTML = '<li class="px-3 py-2 text-slate-400 text-sm">尚無記憶記錄</li>';
+            }
+        }).catch(() => {
+            document.getElementById('memory-list').innerHTML = '<li class="px-3 py-2 text-slate-400 text-sm">載入失敗</li>';
+        });
+
+        // Modal logic
+        const startBtn = document.getElementById('start-debate-btn');
+        const btnText = document.getElementById('btn-text');
+        const topicInput = document.getElementById('debate-topic');
+        const modal = document.getElementById('debate-modal');
+        const modalContent = modal.querySelector('.modal-content');
+        const modalBody = document.getElementById('modal-body');
+
+        const openModal = () => {
+            modal.classList.remove('hidden');
+            void modal.offsetWidth;
+            modal.classList.remove('opacity-0');
+            modalContent.classList.remove('scale-95');
+        };
+
+        document.getElementById('close-modal-btn').addEventListener('click', () => {
+            modal.classList.add('opacity-0');
+            modalContent.classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        });
+
+        startBtn.addEventListener('click', async () => {
+            const topic = topicInput.value.trim();
+            if (!topic) return alert('請輸入討論主題！');
+
+            const agents = Array.from(document.querySelectorAll('#agent-checkboxes input:checked')).map(c => c.value);
+            if (!agents.length) return alert('請選擇至少一位專家！');
+
+            startBtn.disabled = true;
+            startBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            startBtn.querySelector('i').className = 'fas fa-spinner fa-spin';
+            btnText.innerText = '專家思考中...';
+
+            try {
+                const res = await fetch('/api/debate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ topic, agents })
+                });
+                
+                const data = await res.json();
+                modalBody.innerHTML = '';
+                openModal();
+
+                data.debate_memo.forEach((item, index) => {
+                    setTimeout(() => {
+                        const div = document.createElement('div');
+                        div.className = 'p-4 rounded-xl border shadow-sm ' + item.style;
+                        div.innerHTML = '<div class="mb-2"><span class="font-bold text-sm mr-2">' + item.role + '</span><span class="text-[10px] uppercase tracking-wider opacity-70 border border-current px-1.5 py-0.5 rounded">' + item.agent + '</span></div><p class="text-sm leading-relaxed">' + item.content + '</p>';
+                        div.style.animation = 'fadeIn 0.5s ease-out forwards';
+                        modalBody.appendChild(div);
+                        modalBody.scrollTop = modalBody.scrollHeight;
+                    }, index * 1200 + 500);
+                });
+
+            } catch (err) {
+                alert('連線失敗！請確認伺服器正在運行。');
+                console.error(err);
+            } finally {
+                startBtn.disabled = false;
+                startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                startBtn.querySelector('i').className = 'fas fa-play';
+                btnText.innerText = '開始專家辯論';
+            }
+        });
+    </script>
+</body>
+</html>
