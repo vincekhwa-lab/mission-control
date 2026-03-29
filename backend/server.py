@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 from http.server import SimpleHTTPRequestHandler
 
 PORT = os.environ.get("PORT", 8080)
-WORKSPACE = "/home/node/.openclaw/workspace"
+APP_DIR = "/app"
 
 class APIHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
@@ -19,29 +19,30 @@ class APIHandler(SimpleHTTPRequestHandler):
             self.send_header("Access-Control-Allow-Origin", "*")
             self.end_headers()
             
-            # Get memory files
+            # Get memory files from frontend folder (demo data)
             if parsed_path.path.startswith("/api/memory/"):
                 filename = os.path.basename(parsed_path.path)
                 try:
-                    with open(os.path.join(WORKSPACE, "memory", filename), "r") as f:
-                        content = f.read()
-                    self.wfile.write(json.dumps({"content": content}).encode())
+                    # Serve from frontend folder for demo
+                    path = os.path.join(APP_DIR, "frontend", filename)
+                    if os.path.exists(path):
+                        with open(path, "r") as f:
+                            content = f.read()
+                        self.wfile.write(json.dumps({"content": content}).encode())
+                    else:
+                        self.wfile.write(json.dumps({"error": "File not found"}).encode())
                 except Exception as e:
                     self.wfile.write(json.dumps({"error": str(e)}).encode())
             
             # List daily files
             elif parsed_path.path == "/api/daily":
                 try:
-                    memory_dir = os.path.join(WORKSPACE, "memory")
-                    if os.path.exists(memory_dir):
-                        files = sorted([f for f in os.listdir(memory_dir) if f.endswith(".md")])
-                    else:
-                        files = []
+                    frontend_dir = os.path.join(APP_DIR, "frontend")
+                    files = sorted([f for f in os.listdir(frontend_dir) if f.endswith(".html")])
                     self.wfile.write(json.dumps({"files": files}).encode())
                 except Exception as e:
                     self.wfile.write(json.dumps({"error": str(e)}).encode())
             
-            # Default
             else:
                 self.wfile.write(json.dumps({"status": "ok", "message": "API running"}).encode())
             return
@@ -50,8 +51,7 @@ class APIHandler(SimpleHTTPRequestHandler):
         return SimpleHTTPRequestHandler.do_GET(self)
 
 if __name__ == "__main__":
-    # Change to frontend directory
-    os.chdir("/app/frontend")
+    os.chdir(os.path.join(APP_DIR, "frontend"))
     
     with socketserver.TCPServer(("", PORT), APIHandler) as httpd:
         print(f"Mission Control running on port {PORT}")
