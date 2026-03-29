@@ -2,10 +2,14 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Copy all files
-COPY . .
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY backend/ ./backend/
+COPY frontend/ ./frontend/
 
 EXPOSE 8080
 
-# Simple HTTP server to serve static files
-CMD ["python3", "-m", "http.server", "8080", "--directory", "frontend"]
+ENV PORT=8080
+
+CMD ["python", "backend/server.py"]
